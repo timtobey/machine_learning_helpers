@@ -38,11 +38,10 @@ r, c, d = np.shape(np.load(path_to_images + file_list[0]))  # gets size of image
 # A numpy memmap array is created. This is done because we don't want to load the entire array into memory.
 # Note the 'w+' flag; any  existing memmap file will be overwritten so be careful
 
-
 fm = np.memmap(path_to_master_array + master_array_file_name,
                dtype='float32', mode='w+', shape=(image_count, r, c, d))
 
-# iterate through the images and change memmap array
+# iterate through the images and update memmap array
 for i, file in tqdm(enumerate(file_list)):
     fm[i, ...] = np.load(path_to_images + file)
     sleep(.005)
