@@ -1,0 +1,40 @@
+import numpy as np
+
+#######################################
+# This code shuffles large arrays for machine learning.
+# The goal of this code is to shuffle the arrays without
+# loading the entire array into to memory. Normally I would
+# use sklearn's shuffle as it is faster but it loads the entire array
+# into memory from what I can tell as it give me memory errors
+# on larger arrays on systems with smaller memory.
+# ######################################################
+
+# load array data into memmap
+directory = "C:/"
+data_filename = "master_game_array_sample.npy"
+data = np.memmap(directory + data_filename, dtype='float32', mode='r+', shape=(10, 144, 62, 3))
+
+# load array labels into memmap
+labels_filename = "master_game_array_sample_labels.npy"
+labels = np.memmap(directory + labels_filename, dtype='int', mode='r+', shape=(10, 1))
+
+# create empty array of training data to load into memmap
+x_filename = "x_train.npy"
+np.save(directory + x_filename, np.empty(data.shape))
+# create empty array of label data to load into memmap
+y_filename = "y_train.npy"
+np.save(directory + y_filename, np.empty((data.shape[0], 1)))
+
+# load empty train and labels into memmap
+X_train = np.memmap(directory + x_filename, dtype='float32', mode='w+', shape=data.shape)
+Y_train = np.memmap(directory + y_filename, dtype='int', mode='w+', shape=labels.shape)
+
+# Create index 0 to N
+shuffled_index = np.arange(0, len(labels))
+# Shuffle index
+np.random.shuffle(shuffled_index)
+
+# Iterate through shuffled index and translate the values
+for i, x in enumerate(np.nditer(shuffled_index)):
+    X_train[i] = data[x]
+    Y_train[i] = labels[x]
